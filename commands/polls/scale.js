@@ -1,5 +1,9 @@
-const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const {
+    Command
+} = require('discord.js-commando');
+const {
+    RichEmbed
+} = require('discord.js');
 const oneLine = require('common-tags').oneLine;
 
 module.exports = class VoteCommand extends Command {
@@ -10,8 +14,7 @@ module.exports = class VoteCommand extends Command {
             memberName: 'scale',
             description: "Starts a scalar vote.",
             examples: ['!vote "<question>" "<description>" <duration in minutes>'],
-            args: [
-                {
+            args: [{
                     key: 'question',
                     prompt: 'What is the vote question?',
                     type: 'string',
@@ -45,8 +48,12 @@ module.exports = class VoteCommand extends Command {
         // console.log(this.client)
     }
 
-    run(msg, { question, desc, time }) {
-        var emojiList = ['1⃣','2⃣','3⃣','4⃣','5⃣'];
+    run(msg, {
+        question,
+        desc,
+        time
+    }) {
+        var emojiList = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
         var embed = new RichEmbed()
             .setTitle(question)
             .setDescription(desc)
@@ -55,10 +62,9 @@ module.exports = class VoteCommand extends Command {
             .setTimestamp();
 
         if (time) {
-            if (time === 1){
+            if (time === 1) {
                 embed.setFooter(`The vote has started and will last 1 minute`)
-            }
-            else {
+            } else {
                 embed.setFooter(`The vote has started and will last ${time} minutes`)
             }
         } else {
@@ -66,9 +72,11 @@ module.exports = class VoteCommand extends Command {
         }
 
         msg.delete(); // Remove the user's command message
-        msg.channel.send({embed}) // Use a 2d array?
+        msg.channel.send({
+                embed
+            }) // Use a 2d array?
             .then(async (message) => {
-                for(let i in emojiList)
+                for (let i in emojiList)
                     await message.react(emojiList[i])
                 var woah = {}
 
@@ -76,52 +84,55 @@ module.exports = class VoteCommand extends Command {
                 const filter = (reaction, user) => {
                     return user.id != message.author.id;
                 };
-                const collector = message.createReactionCollector(filter, { time: time*1000 });
+                const collector = message.createReactionCollector(filter, {
+                    time: time * 1000
+                });
                 collector.on('collect', (reaction, reactionCollector) => {
                     let users = [...reaction.users];
-                    let otherReactions = message.reactions.filter(_=>_.emoji.name!=reaction.emoji.name);
-                    otherReactions.forEach(_=>{
-                        let removeUser = _.users.find(user=>user.id!=message.author.id&&reaction.users.find(newUser=>user.id==newUser.id))
-                        removeUser&&_.remove(removeUser)
+                    let otherReactions = message.reactions.filter(_ => _.emoji.name != reaction.emoji.name);
+                    otherReactions.forEach(_ => {
+                        let removeUser = _.users.find(user => user.id != message.author.id && reaction.users.find(newUser => user.id == newUser.id))
+                        removeUser && _.remove(removeUser)
                     })
 
                 });
-                let desc = []
                 collector.on('end', collected => {
 
                     let colResults = [...collected]
 
-                    emojiList.forEach(emoji=>{
-                        let users = colResults.find(e=>e[0]==emoji);
+                    emojiList.forEach(emoji => {
+                        let users = colResults.find(e => e[0] == emoji);
                         users = users ? users[1].users : [];
-                        woah[emoji] = [...users].slice(1).map(([id,user])=>({
-                            id:user.id, username:user.username
+                        woah[emoji] = [...users].slice(1).map(([id, user]) => ({
+                            id: user.id,
+                            username: user.username
                         }));
                     });
 
                     message.channel.fetchMessage(message.id)
-                    .then(async (message) => {
-                        emojiList.forEach(emoji=>{
-                            let resultsFor = woah[emoji];
-                            desc.push(emoji + ': ' + (resultsFor.length));
-                            resultsFor.forEach(user=>{
-                                desc.push(user.username+" ("+user.id+")");
-                            })
-                            desc.push('');
-                        });
-                        // embed.setDescription('wow')
-                        embed.setColor(0xD53C55)
-                        if (time === 1){
-                            embed.setFooter(`The vote is now closed! It lasted 1 minute`);
-                        }
-                        else{
-                            embed.setFooter(`The vote is now closed! It lasted ${time} minutes`);
-                        }
-                        embed.setTimestamp();
-                        message.edit("", embed);
+                        .then(async (message) => {
+                            let desc = []
 
-    this.client.channels.get('577966748813361174').send(desc.join('\n') || 'wowow woah')
-                    });
+                            emojiList.forEach(emoji => {
+                                let resultsFor = woah[emoji];
+                                desc.push(emoji + ': ' + (resultsFor.length));
+                                resultsFor.forEach(user => {
+                                    desc.push(user.username + " (" + user.id + ")");
+                                })
+                                desc.push('');
+                            });
+                            // embed.setDescription('wow')
+                            embed.setColor(0xD53C55)
+                            if (time === 1) {
+                                embed.setFooter(`The vote is now closed! It lasted 1 minute`);
+                            } else {
+                                embed.setFooter(`The vote is now closed! It lasted ${time} minutes`);
+                            }
+                            embed.setTimestamp();
+                            message.edit("", embed);
+
+                            this.client.channels.get('577966748813361174').send(desc.join('\n'))
+                        });
 
                 });
 
