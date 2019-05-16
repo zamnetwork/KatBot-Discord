@@ -11,11 +11,11 @@ const runEmoji = require('../../utils/run-emoji-poll.js');
 module.exports = class VoteCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'poll',
+            name: 'mc',
             group: 'polls',
-            memberName: 'poll',
-            description: "Starts a poll vote.",
-            examples: ['!poll "<question>" "<description>" "<choices>" "<image-url>" <duration in minutes> <multiselect>'],
+            memberName: 'mc',
+            description: "Starts a multi select vote.",
+            examples: ['!vote "<question>" "<description>" <duration in minutes>'],
             args: [{
                     key: 'question',
                     prompt: 'What is the vote question?',
@@ -35,24 +35,6 @@ module.exports = class VoteCommand extends Command {
                     }
                 },
                 {
-                    key: 'choices',
-                    prompt: 'Choices for the vote',
-                    type: 'string',
-                    validate: desc => {
-                        if (desc.length < 1000 && desc.length > 0) return true;
-                        return 'Polling choice must be between 0 and 1000 characters in length.';
-                    }
-                },
-                {
-                    key: 'image',
-                    prompt: 'Image url? Empty for nothing.',
-                    type: 'string',
-                    validate: desc => {
-                        if (desc.length < 1000 && desc.length > 0) return true;
-                        return 'Polling Image must be between 0 and 1000 characters in length.';
-                    }
-                },
-                {
                     key: 'time',
                     prompt: 'How long should the vote last in hours?',
                     type: 'float',
@@ -60,12 +42,7 @@ module.exports = class VoteCommand extends Command {
                         if (time >= 0 && time <= 60) return true;
                         return 'Polling time must be between 0 and 60.';
                     }
-                },
-                {
-                    key: 'checkbox',
-                    prompt: 'Checkbox',
-                    type: 'boolean'
-                },
+                }
             ]
         });
         // console.log(this.client)
@@ -74,17 +51,12 @@ module.exports = class VoteCommand extends Command {
     run(msg, {
         question,
         desc,
-        choices,
-        image,
-        time,
-        checkbox
+        time
     }) {
         runEmoji.bind(this)(msg, {
             question,
             desc,
-            image,
-            time,
-            checkbox
-        }, choices.split(' '));
+            time
+        }, ['\ud83c\udde6', '\ud83c\udde7', '\ud83c\udde8', '\ud83c\udde9', '\ud83c\uddea']);
     }
 };

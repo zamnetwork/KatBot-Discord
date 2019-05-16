@@ -48,16 +48,17 @@ module.exports = async function(msg, {
                 time: parseInt(time * 1000 * 60 * 60)
             });
 
-            if (!checkbox) {
-                collector.on('collect', (reaction, reactionCollector) => {
+            collector.on('collect', (reaction, reactionCollector) => {
+                if (!checkbox) {
                     let users = [...reaction.users];
                     let otherReactions = message.reactions.filter(_ => _.emoji.name != reaction.emoji.name);
                     otherReactions.forEach(_ => {
                         let removeUser = _.users.find(user => user.id != message.author.id && reaction.users.find(newUser => user.id == newUser.id))
                         removeUser && _.remove(removeUser)
                     })
-                });
-            }
+                }
+            });
+
             collector.on('end', collected => {
 
                 let colResults = [...collected];
