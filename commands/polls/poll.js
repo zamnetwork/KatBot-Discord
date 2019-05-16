@@ -1,119 +1,87 @@
-const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const {
+    Command
+} = require('discord.js-commando');
+const {
+    RichEmbed
+} = require('discord.js');
 const oneLine = require('common-tags').oneLine;
 
-module.exports = class PollCommand extends Command {
+const runEmoji = require('../../utils/run-emoji-poll.js');
+
+module.exports = class VoteCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'poll',
             group: 'polls',
             memberName: 'poll',
-            description: 'Creates a poll with up to 10 choices.',
-            examples: ["!poll \"What\'s your favourite food?\" \"Hot Dogs,Pizza,Burgers,Fruits,Veggies\" 10"],
-            args: [
-                {
+            description: "Starts a poll vote.",
+            examples: ['!poll "<question>" "<description>" "<choices>" <duration in minutes>'],
+            args: [{
                     key: 'question',
-                    prompt: 'What is the poll question?',
+                    prompt: 'What is the vote question?',
                     type: 'string',
                     validate: question => {
-                        if (question.length < 101 && question.length > 11) return true;
-                        return 'Polling questions must be between 10 and 100 characters in length.';
-                    }  
-                }, 
+                        if (question.length < 1000 && question.length > 0) return true;
+                        return 'Polling questions must be between 0 and 1000 characters in length.';
+                    }
+                },
                 {
-                    key: 'options',
-                    prompt: 'What options do you want for the poll?',
+                    key: 'desc',
+                    prompt: '(Optional) Do you have more details?',
                     type: 'string',
-                    validate: options => {
-                        var optionsList = options.split(",");
-                        if (optionsList.length > 1) return true;
-                        return 'Polling options must be greater than one.';
-                    }  
+                    default: ' ',
+                    validate: desc => {
+                        if (desc.length < 1000 && desc.length > 0) return true;
+                        return 'Polling questions must be between 0 and 1000 characters in length.';
+                    }
+                },
+                {
+                    key: 'choices',
+                    prompt: 'Choices for the vote',
+                    type: 'string',
+                    default: ' ',
+                    validate: desc => {
+                        if (desc.length < 1000 && desc.length > 0) return true;
+                        return 'Polling choice must be between 0 and 1000 characters in length.';
+                    }
+                },
+                {
+                    key: 'image',
+                    prompt: '(Optional) Do you have more details?',
+                    type: 'string',
+                    default: ' ',
+                    validate: desc => {
+                        if (desc.length < 1000 && desc.length > 0) return true;
+                        return 'Polling Image must be between 0 and 1000 characters in length.';
+                    }
                 },
                 {
                     key: 'time',
-                    prompt: 'How long should the poll last in minutes?',
-                    type: 'integer',
+                    prompt: '(Optional) How long should the vote last in hours?',
+                    type: 'float',
                     default: 0,
                     validate: time => {
                         if (time >= 0 && time <= 60) return true;
                         return 'Polling time must be between 0 and 60.';
-                    } 
-                },
+                    }
+                }
             ]
         });
+        // console.log(this.client)
     }
-    
-    run(msg, { question, options, time }) {
-        var emojiList = ['1⃣','2⃣','3⃣','4⃣','5⃣','6⃣','7⃣','8⃣','9⃣','🔟'];
-        var optionsList = options.split(",");
-        
-        var optionsText = "";
-        for (var i = 0; i < optionsList.length; i++) { 
-            optionsText += emojiList[i] + " " + optionsList[i] + "\n";
-        }
-        
-        var embed = new RichEmbed()
-            .setTitle(question)
-            .setDescription(optionsText)
-            .setAuthor(msg.author.username, msg.author.displayAvatarURL)
-            .setColor(0xD53C55) // Green: 0x00AE86
-            .setTimestamp();
-            
-        if (time) {
-            embed.setFooter(`The poll has started and will last ${time} minute(s)`);
-        } else {
-            embed.setFooter(`The poll has started and has no end time`);
-        }
-            
-        //msg.delete(); // Remove the user's command message
 
-        msg.channel.send({embed}) // Definitely use a 2d array here..
-            .then(async function (message) {
-                var reactionArray = [];
-                for (var i = 0; i < optionsList.length; i++) { 
-                    reactionArray[i] = await message.react(emojiList[i]);
-                }
-                
-                if (time) {
-                    setTimeout(() => {
-                        // Re-fetch the message and get reaction counts
-                        message.channel.fetchMessage(message.id)
-                            .then(async function (message) {
-                                var reactionCountsArray = [];
-                                for (var i = 0; i < optionsList.length; i++) {
-                                    reactionCountsArray[i] = message.reactions.get(emojiList[i]).count-1;
-                                }
-
-                                // Find winner(s)
-                                var max = -Infinity, indexMax = [];
-                                for(var i = 0; i < reactionCountsArray.length; ++i)
-                                    if(reactionCountsArray[i] > max) max = reactionCountsArray[i], indexMax = [i];
-                                    else if(reactionCountsArray[i] === max) indexMax.push(i);
-                        
-                                // Display winner(s)
-                                console.log(reactionCountsArray); // Debugging votes
-                                var winnersText = "";
-                                if (reactionCountsArray[indexMax[0]] == 0) {
-                                    winnersText = "No one voted!"
-                                } else {
-                                    for (var i = 0; i < indexMax.length; i++) {
-                                        winnersText += 
-                                            emojiList[indexMax[i]] + " " + optionsList[indexMax[i]] + 
-                                            " (" + reactionCountsArray[indexMax[i]] + " vote(s))\n";
-                                    }
-                                }
-                                
-                                embed.addField("**Winner(s):**", winnersText);
-                                embed.setFooter(`The poll is now closed! It lasted ${time} minute(s)`);
-                                embed.setTimestamp();
-                                
-                                message.edit("", embed);
-                            });
-                    }, time * 60 * 1000);
-                }
-            }).catch(console.error);
-                
-        return;
+    run(msg, {
+        question,
+        desc,
+        choices,
+        image,
+        time
+    }) {
+        runEmoji.bind(this)(msg, {
+            question,
+            desc,
+            image,
+            time
+        }, choices.split(' '));
     }
 };

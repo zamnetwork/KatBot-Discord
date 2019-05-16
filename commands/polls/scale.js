@@ -37,12 +37,12 @@ module.exports = class VoteCommand extends Command {
                 },
                 {
                     key: 'time',
-                    prompt: '(Optional) How long should the vote last in minutes?',
-                    type: 'integer',
+                    prompt: '(Optional) How long should the vote last in hours?',
+                    type: 'float',
                     default: 0,
                     validate: time => {
-                        if (time >= 0 && time <= 10000) return true;
-                        return 'Polling time must be between 0 and 10000. (0 means poll never ends)';
+                        if (time >= 0 && time <= 60) return true;
+                        return 'Polling time must be between 0 and 60.';
                     }
                 }
             ]

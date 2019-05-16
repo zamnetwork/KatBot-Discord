@@ -37,8 +37,8 @@ module.exports = class VoteCommand extends Command {
                 },
                 {
                     key: 'time',
-                    prompt: '(Optional) How long should the vote last in minutes?',
-                    type: 'integer',
+                    prompt: '(Optional) How long should the vote last in hours?',
+                    type: 'float',
                     default: 0,
                     validate: time => {
                         if (time >= 0 && time <= 60) return true;

@@ -9,21 +9,23 @@ const oneLine = require('common-tags').oneLine;
 module.exports = async function(msg, {
     question,
     desc,
+    image,
     time
 }, emojiList) {
     // var emojiList = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
     var embed = new RichEmbed()
         .setTitle(question)
         .setDescription(desc)
+        .setImage(image)
         .setAuthor(msg.author.username, msg.author.displayAvatarURL)
         .setColor(0x00AE86)
         .setTimestamp();
 
     if (time) {
         if (time === 1) {
-            embed.setFooter(`The vote has started and will last 1 minute`)
+            embed.setFooter(`The vote has started and will last 1 hours`)
         } else {
-            embed.setFooter(`The vote has started and will last ${time} minutes`)
+            embed.setFooter(`The vote has started and will last ${time} hours`)
         }
     } else {
         embed.setFooter(`The vote has started and has no end time`)
@@ -42,7 +44,7 @@ module.exports = async function(msg, {
                 return user.id != message.author.id;
             };
             const collector = message.createReactionCollector(filter, {
-                time: time * 1000
+                time: parseInt(time * 1000 * 60 * 60)
             });
             collector.on('collect', (reaction, reactionCollector) => {
                 let users = [...reaction.users];
@@ -93,14 +95,14 @@ module.exports = async function(msg, {
                         // embed.setDescription('wow')
                         embed.setColor(0xD53C55)
                         if (time === 1) {
-                            embed.setFooter(`The vote is now closed! It lasted 1 minute`);
+                            embed.setFooter(`The vote is now closed! It lasted 1 hour`);
                         } else {
-                            embed.setFooter(`The vote is now closed! It lasted ${time} minutes`);
+                            embed.setFooter(`The vote is now closed! It lasted ${time} hour`);
                         }
                         embed.setTimestamp();
                         message.edit("", embed);
 
-                        let channel = this.client.channels.get('577966748813361174');
+                        let channel = this.client.channels.get(this.client.config.resultsChannel);
 
                         channel.send(desc.join('\n'));
                         channel.sendFile(Buffer.from(voteData.map(voteEntry => voteEntry.join(',')).join('\n')), 'votes.csv');

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "discord.js": "^11.5.0",
-    "discord.js-commando": "^0.10.0"
+    "discord.js-commando": "^0.10.0",
+    "yargs": "^13.2.4"
   }
 }

@@ -1,6 +1,10 @@
-﻿const { CommandoClient } = require('discord.js-commando');
+const {
+    CommandoClient
+} = require('discord.js-commando');
 const path = require('path');
-const config = require( path.resolve( __dirname, "config.json" ) );
+const argv = require('yargs').argv;
+
+const config = require(path.resolve(__dirname, argv.config || "config.json"));
 
 const client = new CommandoClient({
     commandPrefix: config.prefix,
@@ -8,6 +12,8 @@ const client = new CommandoClient({
     owner: config.owner,
     disableEveryone: true
 });
+
+client.config = config;
 
 client.registry
     .registerDefaultTypes()
@@ -19,8 +25,8 @@ client.registry
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setActivity(config.activity);
+    console.log(`Logged in as ${client.user.tag}!`);
+    client.user.setActivity(config.activity);
 });
 
 client.login(config.token);
