@@ -16,3 +16,11 @@ coverage
 
 items.json
 cache/
+
+
+**/.terraform/
+index.local.js
+*.zip
+*.backup
+*/whatever.tf
+*.json
