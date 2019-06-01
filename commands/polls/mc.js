@@ -6,7 +6,9 @@ const {
 } = require('discord.js');
 const oneLine = require('common-tags').oneLine;
 
-const runEmoji = require('../../utils/run-emoji-poll.js');
+const {
+    runEmoji
+} = require('../../utils/run-emoji-poll.js');
 
 module.exports = class VoteCommand extends Command {
     constructor(client) {
