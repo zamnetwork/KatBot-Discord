@@ -7,17 +7,71 @@ const {
 const oneLine = require('common-tags').oneLine;
 
 const fs = require('fs');
+const path = require('path');
+const AWS = require('aws-sdk');
+const Logging = console;
+const s3 = new AWS.S3();
+const Bucket = 'zam-polls';
 
-function getState() {
+function uploadFile({
+    key,
+    contents,
+}) {
+    return s3.upload({
+            Bucket,
+            Key: key,
+            Body: Buffer.from(contents),
+            ACL: 'public-read',
+        })
+        .promise()
+        .then(r => {
+            // Logging.log(r);
+            return r;
+        })
+        .catch(e => {
+            Logging.error(e);
+            return null;
+        });
+}
+
+function downloadFile(
+    key,
+) {
+    return s3.getObject({
+            Bucket,
+            Key: key,
+        })
+        .promise()
+        .then(r => {
+            // Logging.log(r);
+            return r.Body.toString();
+        })
+        .catch(e => {
+            Logging.error(e);
+            return null;
+        });
+}
+
+
+
+async function getState() {
+
     try {
-        return JSON.parse(fs.readFileSync(this.client.config.stateFile).toString());
+        let content = await downloadFile(this.client.config.stateFile);
+        return JSON.parse(content);
+        // return JSON.parse(fs.readFileSync(this.client.config.stateFile).toString());
     } catch (e) {
+        console.log(e)
         return {};
     }
 }
 
 function saveState(state) {
     fs.writeFileSync(this.client.config.stateFile, JSON.stringify(state, null, 4));
+    return uploadFile({
+        key: this.client.config.stateFile,
+        contents: JSON.stringify(state, null, 4),
+    })
 }
 
 
@@ -121,7 +175,7 @@ function startPollReactionCollection(message, emojiList, pollData, author, timeM
         await channel.send(resultList.join('\n'));
         await channel.sendFile(Buffer.from(voteData.map(voteEntry => voteEntry.join(',')).join('\n')), 'votes.csv');
 
-        state = getState.call(this);
+        state = await getState.call(this);
         let poll = state.polls.find(pollSearch => pollSearch.messageId == message.id)
         if (poll) {
             poll.sentResults = true;
@@ -175,7 +229,7 @@ async function runEmoji(msg, pollData, emojiList) {
 
             let timeMs = parseInt(time * 1000 * 60 * 60);
 
-            state = getState.call(this);
+            state = await getState.call(this);
             state.polls = state.polls || [];
             state.polls.push({
                 pollData,

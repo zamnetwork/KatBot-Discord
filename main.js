@@ -31,11 +31,11 @@ client.registry
     .registerDefaultCommands()
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity(config.activity);
 
-    let state = getState.call({
+    let state = await getState.call({
         client
     });
 
