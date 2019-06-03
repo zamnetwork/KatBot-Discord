@@ -39,18 +39,20 @@ client.on('ready', () => {
         client
     });
 
-    let currentPolls = (state.polls || []).filter(poll => (console.log(poll.createdAt + poll.timeMs - Date.now()), poll.createdAt + poll.timeMs > Date.now()));
+    let currentPolls = (state.polls || []).filter(poll => !poll.sentResults);
 
     currentPolls.forEach(poll => {
         let channel = client.channels.get(poll.channelId);
 
         channel.fetchMessage(poll.messageId).then(message => {
             console.log("resuming poll")
-            startPollReactionCollection(message, poll.pollData, poll.createdAt + poll.timeMs - Date.now())
+            startPollReactionCollection.call({
+                client
+            }, message, poll.emojiList, poll.pollData, poll.author, Math.max(1, poll.createdAt + poll.timeMs - Date.now()))
         })
     })
     //message.channel.fetchMessage(message.id)
-    console.log('currentPolls', currentPolls)
+    // console.log('currentPolls', currentPolls)
 
 });
 
