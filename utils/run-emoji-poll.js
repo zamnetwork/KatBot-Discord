@@ -34,25 +34,14 @@ function uploadFile({
         });
 }
 
-function downloadFile(
-    key,
-) {
+function downloadFile(key) {
     return s3.getObject({
             Bucket,
             Key: key,
         })
         .promise()
-        .then(r => {
-            // Logging.log(r);
-            return r.Body.toString();
-        })
-    // .catch(e => {
-    //     Logging.error(e);
-    //     return null;
-    // });
+        .then(r => r.Body.toString());
 }
-
-
 
 async function getState() {
 
@@ -73,7 +62,6 @@ function saveState(state) {
         contents: JSON.stringify(state, null, 4),
     })
 }
-
 
 function startPollReactionCollection(message, emojiList, pollData, author, timeMs) {
 
@@ -102,8 +90,6 @@ function startPollReactionCollection(message, emojiList, pollData, author, timeM
     if (author) {
         embed.setAuthor(author.username, author.displayAvatarURL)
     }
-
-    //
 
     collector.on('collect', (reaction, reactionCollector) => {
         if (!checkbox) {
@@ -149,7 +135,6 @@ function startPollReactionCollection(message, emojiList, pollData, author, timeM
         });
 
 
-
         let resultList = [question, desc]
 
         emojiList.forEach(emoji => {
@@ -181,8 +166,6 @@ function startPollReactionCollection(message, emojiList, pollData, author, timeM
             poll.sentResults = true;
             saveState.call(this, state);
         }
-
-
     });
 }
 
