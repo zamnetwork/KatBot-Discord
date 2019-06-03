@@ -11,7 +11,6 @@ coverage
 **/dist/*
 **.DS_Store
 
-**docker-compose.yml
 .yo-rc.json
 
 items.json
@@ -23,4 +22,10 @@ index.local.js
 *.zip
 *.backup
 */whatever.tf
-*.json
+state.json
+state-test.json
+config.json
+config-test.json
+
+docker-compose.yml
+.env

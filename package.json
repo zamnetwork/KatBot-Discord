@@ -1,4 +1,22 @@
 {
+  "name": "polebot-discord",
+  "description": "KatBot runs on the **discord.js** libaray with **Commando** support.",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zamnetwork/Polebot-Discord.git"
+  },
+  "author": "ktabert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zamnetwork/Polebot-Discord/issues"
+  },
+  "homepage": "https://github.com/zamnetwork/Polebot-Discord#readme",
+  "scripts": {
+    "start": "nodemon main.js --ignore '*.json'"
+  },
   "dependencies": {
     "aws-sdk": "^2.467.0",
     "discord.js": "^11.5.0",

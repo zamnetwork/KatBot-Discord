@@ -4,7 +4,17 @@ const {
 const path = require('path');
 const argv = require('yargs').argv;
 
-const config = require(path.resolve(__dirname, argv.config || "config.json"));
+const env = process.env;
+
+const config = {
+    "token": env.DISCORD_TOKEN,
+    "owner": env.DISCORD_OWNER,
+    "activity": env.DISCORD_ACTIVITY,
+    "prefix": env.DISCORD_PREFIX,
+    "resultsChannel": env.DISCORD_RESULTS_CHANNEL,
+    "stateFile": env.DISCORD_STATE_FILE
+}
+//require(path.resolve(__dirname, argv.config || "config.json"));
 
 const {
     getState,

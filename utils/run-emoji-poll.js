@@ -46,10 +46,10 @@ function downloadFile(
             // Logging.log(r);
             return r.Body.toString();
         })
-        .catch(e => {
-            Logging.error(e);
-            return null;
-        });
+    // .catch(e => {
+    //     Logging.error(e);
+    //     return null;
+    // });
 }
 
 
