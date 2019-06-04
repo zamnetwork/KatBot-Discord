@@ -11,6 +11,24 @@ coverage
 **/dist/*
 **.DS_Store
 
+**docker-compose.yml*
+Dockerfile*
+Jenkinsfile*
+.git
+
+**/node_modules/*
+node_modules
+**package-lock.json
+**yarn-error*
+
+coverage
+**/coverage
+**.nyc_output
+
+**/doc/*
+**/dist/*
+**.DS_Store
+
 .yo-rc.json
 
 items.json

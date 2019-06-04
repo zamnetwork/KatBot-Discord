@@ -40,15 +40,15 @@
             },
             {
               "name": "DISCORD_STATE_FILE",
-              "value": "state-test.json"
+              "value": "state.json"
             },
             {
               "name": "DISCORD_RESULTS_CHANNEL",
-              "value": "577966748813361174"
+              "value": "578286177413627935"
             },
             {
               "name": "DISCORD_OWNER",
-              "value": "577600058955137054"
+              "value": "155439694321156096"
             },
             {
               "name": "DISCORD_TOKEN",
