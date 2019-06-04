@@ -29,3 +29,4 @@ config-test.json
 
 docker-compose.yml
 .env
+secret.yaml

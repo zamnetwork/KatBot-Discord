@@ -49,16 +49,43 @@
             {
               "name": "DISCORD_OWNER",
               "value": "577600058955137054"
+            },
+            {
+              "name": "DISCORD_TOKEN",
+              "valueFrom": {
+                "secretKeyRef": {
+                  "key": "discordToken",
+                  "name": "pollbot-credentials"
+                }
+              }
+            },
+            {
+              "name": "AWS_ACCESS_KEY_ID",
+              "valueFrom": {
+                "secretKeyRef": {
+                  "key": "awsAccessKey",
+                  "name": "pollbot-credentials"
+                }
+              }
+            },
+            {
+              "name": "AWS_SECRET_ACCESS_KEYk",
+              "valueFrom": {
+                "secretKeyRef": {
+                  "key": "awsSecret",
+                  "name": "pollbot-credentials"
+                }
+              }
             }
           ],
           "resources": {
             "limits": {
               "cpu": "500m",
-              "memory": "500Mi"
+              "memory": "1000Mi"
             },
             "requests": {
               "cpu": "100m",
-              "memory": "200Mi"
+              "memory": "1000Mi"
             }
           }
         }]
